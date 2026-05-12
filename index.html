@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>🎪 Arraiá Digital</title>
+
+  <!-- Fonte -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:
+      linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+      url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80');
+
+      background-size:cover;
+      background-position:center;
+      color:white;
+      overflow-x:hidden;
+    }
+
+    .overlay{
+      min-height:100vh;
+      backdrop-filter:blur(4px);
+      background:rgba(0,0,0,0.2);
+    }
+
+    /* Bandeirinhas */
+
+    .flags{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      padding:10px;
+    }
+
+    .flag{
+      width:40px;
+      height:55px;
+      clip-path:polygon(50% 100%,0 0,100% 0);
+      animation:balanco 2s infinite ease-in-out;
+    }
+
+    .flag:nth-child(1){background:#ff3131;}
+    .flag:nth-child(2){background:#ffd93d;}
+    .flag:nth-child(3){background:#3b82f6;}
+    .flag:nth-child(4){background:#22c55e;}
+    .flag:nth-child(5){background:#ff8c00;}
+    .flag:nth-child(6){background:#ec4899;}
+    .flag:nth-child(7){background:#9333ea;}
+    .flag:nth-child(8){background:#14b8a6;}
+
+    @keyframes balanco{
+      0%{transform:rotate(-5deg);}
+      50%{transform:rotate(5deg);}
+      100%{transform:rotate(-5deg);}
+    }
+
+    /* Header */
+
+    header{
+      text-align:center;
+      padding:40px 20px;
+    }
+
+    header h1{
+      font-size:4rem;
+      font-weight:900;
+      text-shadow:0 0 15px orange;
+    }
+
+    header p{
+      margin-top:15px;
+      font-size:1.2rem;
+      color:#ffe9b0;
+    }
+
+    /* Produtos */
+
+    .products{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      padding:50px;
+      max-width:1400px;
+      margin:auto;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.12);
+      border:2px solid rgba(255,255,255,0.15);
+      backdrop-filter:blur(10px);
+      border-radius:25px;
+      overflow:hidden;
+      transition:0.4s;
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .card:hover{
+      transform:translateY(-10px) scale(1.02);
+    }
+
+    .card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+    }
+
+    .card-content{
+      padding:25px;
+    }
+
+    .card h2{
+      font-size:2rem;
+      margin-bottom:10px;
+    }
+
+    .card p{
+      color:#f1f1f1;
+      line-height:1.6;
+    }
+
+    .price{
+      color:#ffd93d;
+      font-size:2rem;
+      font-weight:900;
+      margin:15px 0;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      padding:16px;
+      border-radius:15px;
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.3s;
+      color:white;
+    }
+
+    .buy{
+      background:linear-gradient(45deg,#ff3131,#ff8c00);
+    }
+
+    .buy:hover{
+      transform:scale(1.03);
+    }
+
+    /* Novas Informações */
+
+    .info-tag{
+      background:#ffd93d;
+      color:#000;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:0.85rem;
+      font-weight:700;
+      display:inline-block;
+      margin-bottom:15px;
+    }
+
+    .extra-info{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:15px;
+      margin-bottom:15px;
+      color:#ffe8aa;
+      font-size:0.95rem;
+    }
+
+    /* Carrinho */
+
+    .cart{
+      position:fixed;
+      top:20px;
+      right:20px;
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:20px;
+      width:320px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+      z-index:999;
+    }
+
+    .cart h3{
+      margin-bottom:15px;
+      color:#ff3131;
+    }
+
+    .cart-item{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:10px;
+      font-weight:600;
+    }
+
+    .total{
+      margin-top:15px;
+      font-size:1.4rem;
+      font-weight:900;
+      color:#ff8c00;
+    }
+
+    .finish{
+      margin-top:15px;
+      background:#22c55e;
+    }
+
+    .finish:hover{
+      background:#16a34a;
+    }
+
+    footer{
+      text-align:center;
+      padding:40px;
+      color:#ffe8aa;
+    }
+
+    @media(max-width:768px){
+
+      header h1{
+        font-size:2.8rem;
+      }
+
+      .products{
+        padding:20px;
+      }
+
+      .cart{
+        width:90%;
+        left:5%;
+        right:5%;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <!-- Bandeirinhas -->
+  <div class="flags">
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+    <div class="flag"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <h1>🎪 Arraiá Digital</h1>
+
+    <p>
+      As melhores comidas típicas da Festa Junina 🌽🔥
+    </p>
+  </header>
+
+  <!-- Produtos -->
+  <section class="products">
+
+    <!-- Produto 1 -->
+    <div class="card">
+      <img
+    <!-- PAMONHA -->
+<img
+  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sbQOnV1mkbb51j3Gjl1dSibjlh88ZmqSgA&s"
+  alt="Pamonha"> 
+
+      
+
+      <div class="card-content">
+
+        <span class="info-tag">
+          🌽 Barraca Tradicional
+        </span>
+
+        <h2>🌽 Pamonha</h2>
+
+        <p>
+          Pamonha cremosa tradicional feita na hora.
+          Com milho fresco e sabor típico da roça.
+        </p>
+
+        <div class="extra-info">
+          <span>🔥 Produção quentinha</span>
+          <span>⭐ Mais pedida da festa</span>
+        </div>
+
+        <div class="price">
+          R$ 12
+        </div>
+
+        <button
+          class="btn buy"
+          onclick="adicionarCarrinho('Pamonha',12)"
+        >
+          Comprar 🌽
+        </button>
+      </div>
+    </div>
+
+    <!-- Produto 2 -->
+    <div class="card">
+      <img
+      <!-- CANJICA -->
+<img
+  src="https://cdn0.umcomo.com.br/pt/posts/6/2/3/como_fazer_canjica_9326_600.jpg"
+  alt="Canjica"
+>
+      >
+
+      <div class="card-content">
+
+        <span class="info-tag">
+          🍚 Doces Juninos
+        </span>
+
+        <h2>🍚 Canjica</h2>
+
+        <p>
+          Canjica doce com leite condensado e canela.
+          Receita caseira deliciosa.
+        </p>
+
+        <div class="extra-info">
+          <span>🥥 Coco ralado fresco</span>
+          <span>🔥 Servida quente</span>
+        </div>
+
+        <div class="price">
+          R$ 15
+        </div>
+
+        <button
+          class="btn buy"
+          onclick="adicionarCarrinho('Canjica',15)"
+        >
+          Comprar 🍚
+        </button>
+      </div>
+    </div>
+
+    <!-- Produto 3 -->
+    <div class="card">
+      <img
+    <!-- CACHORRO-QUENTE -->
+<img
+  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdkJdjiUyZbYQmnZwYBfa5BljatiQJUeTv9Q&s"
+  alt="Cachorro Quente"
+>
+      >
+
+      <div class="card-content">
+
+        <span class="info-tag">
+          🌭 Lanches da Festa
+        </span>
+
+        <h2>🌭 Cachorro-Quente</h2>
+
+        <p>
+          Cachorro-quente completo com molho especial,
+          milho e batata palha crocante.
+        </p>
+
+        <div class="extra-info">
+          <span>🔥 Molho artesanal</span>
+          <span>🥤 Combo disponível</span>
+        </div>
+
+        <div class="price">
+          R$ 18
+        </div>
+
+        <button
+          class="btn buy"
+          onclick="adicionarCarrinho('Cachorro-Quente',18)"
+        >
+          Comprar 🌭
+        </button>
+      </div>
+    </div>
+
+    <!-- Produto 4 -->
+    <div class="card">
+    <!-- PIPOCA -->
+<img
+  src="https://images.unsplash.com/photo-1578849278619-e73505e9610f?q=80&w=1200&auto=format&fit=crop"
+  alt="Pipoca"
+>
+
+      <div class="card-content">
+
+        <span class="info-tag">
+          🍿 Snacks Juninos
+        </span>
+
+        <h2>🍿 Pipoca</h2>
+
+        <p>
+          Pipoca amanteigada fresquinha da festa.
+          Crocante e feita na hora.
+        </p>
+
+        <div class="extra-info">
+          <span>🧈 Manteiga especial</span>
+          <span>🎪 Clássico junino</span>
+        </div>
+
+        <div class="price">
+          R$ 8
+        </div>
+
+        <button
+          class="btn buy"
+          onclick="adicionarCarrinho('Pipoca',8)"
+        >
+          Comprar 🍿
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Carrinho -->
+  <div class="cart">
+
+    <h3>🛒 Carrinho</h3>
+
+    <div id="cart-items"></div>
+
+    <div class="total">
+      Total: R$ <span id="total">0</span>
+    </div>
+
+    <button
+      class="btn finish"
+      onclick="finalizarCompra()"
+    >
+      Finalizar Compra 🎟️
+    </button>
+
+  </div>
+
+  <footer>
+    🎆 Arraiá Digital • Festa Junina Online 🌽🔥
+  </footer>
+
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const SUPABASE_URL = 'https://srxmsekhloahttryyvej.supabase.co/rest/v1/'
+const SUPABASE_KEY = 'srxmsekhloahttryyvej'
+
+const client = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+)
+
+let total = 0
+
+async function carregarProdutos(){
+
+  const response = await fetch(
+    'http://localhost:3000/produtos'
+  )
+
+  const data = await response.json()
+
+  const products = document.querySelector('.products')
+
+  products.innerHTML = ''
+
+  data.forEach(produto => {
+
+    products.innerHTML += `
+
+      <div class="card">
+
+        <img src="${produto.imagem}">
+
+        <div class="card-content">
+
+          <span class="info-tag">
+            🎪 ${produto.categoria}
+          </span>
+
+          <h2>
+            🌽 ${produto.nome}
+          </h2>
+
+          <p>
+            ${produto.descricao}
+          </p>
+
+          <div class="price">
+            R$ ${produto.preco}
+          </div>
+
+          <button
+            class="btn buy"
+            onclick="adicionarCarrinho(
+              '${produto.nome}',
+              ${produto.preco}
+            )"
+          >
+            Comprar 🛒
+          </button>
+
+        </div>
+
+      </div>
+
+    `
+
+  })
+
+carregarProdutos()
+
+</script>
+
+</body>
+</html>
+
