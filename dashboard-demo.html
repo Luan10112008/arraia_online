@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>📊 Dashboard do Prefeito (Demo) - Arraiá Digital</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+    }
+
+    .status {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    .stat-box h3 {
+      font-size: 0.9rem;
+      color: #d1d1d1;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-box .value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffd93d;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+    }
+
+    .card-full {
+      grid-column: 1 / -1;
+    }
+
+    .ranking {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .ranking-item {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      border-left: 5px solid #ffd93d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .ranking-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(10px);
+    }
+
+    .ranking-item.gold {
+      border-left-color: #ffd700;
+      background: rgba(255, 215, 0, 0.15);
+    }
+
+    .ranking-item.silver {
+      border-left-color: #c0c0c0;
+      background: rgba(192, 192, 192, 0.1);
+    }
+
+    .ranking-item.bronze {
+      border-left-color: #cd7f32;
+      background: rgba(205, 127, 50, 0.1);
+    }
+
+    .ranking-info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .ranking-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .gold .ranking-badge {
+      background: #ffd700;
+      color: #333;
+    }
+
+    .silver .ranking-badge {
+      background: #c0c0c0;
+      color: #333;
+    }
+
+    .bronze .ranking-badge {
+      background: #cd7f32;
+      color: white;
+    }
+
+    .ranking-details h3 {
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+
+    .ranking-details p {
+      color: #d1d1d1;
+      font-size: 0.9rem;
+    }
+
+    .ranking-value {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .ranking-value .amount {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #ffd93d;
+    }
+
+    .ranking-value .tax {
+      font-size: 0.85rem;
+      color: #d1d1d1;
+    }
+
+    .toggle-view {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .toggle-view button {
+      padding: 10px 20px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .toggle-view button.active {
+      background: #ffd93d;
+      color: #333;
+    }
+
+    .last-update {
+      text-align: center;
+      color: #d1d1d1;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    .demo-banner {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid #ffd93d;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #ffd93d;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>📊 Dashboard do Prefeito</h1>
+      <p>Modo DEMO - Dados de exemplo em tempo real 🎪</p>
+    </header>
+
+    <div class="demo-banner">
+      ⚠️ MODO DEMONSTRAÇÃO - Para usar dados reais, configure o Supabase. Veja SETUP_DASHBOARD.md
+    </div>
+
+    <div class="status">
+      <div class="status-card">
+        <div class="status-indicator"></div>
+        Sistema em Tempo Real
+      </div>
+      <div class="status-card">
+        <span>🔄 Atualizando a cada 2 segundos</span>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <h3>Total de Barracas</h3>
+        <div class="value" id="totalBarracas">5</div>
+      </div>
+      <div class="stat-box">
+        <h3>Lucro Total</h3>
+        <div class="value" id="totalLucro">R$ 0,00</div>
+      </div>
+      <div class="stat-box">
+        <h3>Impostos Arrecadados</h3>
+        <div class="value" id="totalImpostos">R$ 0,00</div>
+      </div>
+      <div class="stat-box">
+        <h3>Total de Pedidos</h3>
+        <div class="value" id="totalPedidos">0</div>
+      </div>
+    </div>
+
+    <div class="toggle-view">
+      <button class="active" onclick="toggleView('charts')">📊 Gráficos</button>
+      <button onclick="toggleView('ranking')">🏆 Ranking</button>
+    </div>
+
+    <div class="grid" id="chartsView">
+      <div class="card">
+        <h2>💰 Lucro por Barraca</h2>
+        <div class="chart-container">
+          <canvas id="lucroChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💵 Impostos Arrecadados</h2>
+        <div class="chart-container">
+          <canvas id="impostosChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card card-full">
+        <h2>📈 Evolução de Lucros (Últimas Horas)</h2>
+        <div class="chart-container" style="height: 350px;">
+          <canvas id="evolucaoChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" id="rankingView" style="display: none;">
+      <div class="card card-full">
+        <h2>🏆 Ranking de Barracas (Maior Lucro)</h2>
+        <div class="ranking" id="rankingList"></div>
+        <div class="last-update" id="lastUpdate"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Dados de exemplo que simulam vendas reais
+    const barracasBase = {
+      'Barraca da Pamonha': { lucro: 320, pedidos: 32 },
+      'Barraca da Cana': { lucro: 280, pedidos: 28 },
+      'Barraca do Bolo': { lucro: 450, pedidos: 45 },
+      'Barraca do Quentão': { lucro: 380, pedidos: 38 },
+      'Barraca da Broa': { lucro: 290, pedidos: 29 }
+    };
+
+    let lucroChart, impostosChart, evolucaoChart;
+    let atualizacaoInterval;
+
+    const cores = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A',
+      '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+    ];
+
+    // Simular variações de lucro em tempo real
+    function gerarDadosComVariacao() {
+      const barracas = {};
+      Object.entries(barracasBase).forEach(([nome, dados], idx) => {
+        // Adiciona variação aleatória de até 20%
+        const variacao = (Math.random() - 0.5) * (dados.lucro * 0.2);
+        const lucroAtual = Math.max(10, dados.lucro + variacao);
+        barracas[nome] = {
+          lucro: lucroAtual,
+          impostos: lucroAtual * 0.1,
+          pedidos: dados.pedidos
+        };
+      });
+      return barracas;
+    }
+
+    function inicializarDashboard() {
+      atualizarDados();
+      atualizacaoInterval = setInterval(atualizarDados, 2000);
+    }
+
+    function atualizarDados() {
+      const barracas = gerarDadosComVariacao();
+      
+      let totalLucro = 0;
+      let totalImpostos = 0;
+      let totalPedidos = 0;
+
+      Object.values(barracas).forEach(b => {
+        totalLucro += b.lucro;
+        totalImpostos += b.impostos;
+        totalPedidos += b.pedidos;
+      });
+
+      window.dashboardData = {
+        barracas,
+        totalLucro,
+        totalImpostos,
+        totalPedidos
+      };
+
+      atualizarStats();
+      atualizarGraficos();
+      atualizarRanking();
+
+      document.getElementById('lastUpdate').textContent = 
+        `Atualizado às ${new Date().toLocaleTimeString('pt-BR')}`;
+    }
+
+    function atualizarStats() {
+      const data = window.dashboardData;
+      document.getElementById('totalBarracas').textContent = Object.keys(data.barracas).length;
+      document.getElementById('totalLucro').textContent = `R$ ${data.totalLucro.toFixed(2).replace('.', ',')}`;
+      document.getElementById('totalImpostos').textContent = `R$ ${data.totalImpostos.toFixed(2).replace('.', ',')}`;
+      document.getElementById('totalPedidos').textContent = data.totalPedidos;
+    }
+
+    function atualizarGraficos() {
+      const data = window.dashboardData;
+      const barracas = Object.keys(data.barracas);
+      const lucros = Object.values(data.barracas).map(b => b.lucro);
+      const impostos = Object.values(data.barracas).map(b => b.impostos);
+
+      if (lucroChart) lucroChart.destroy();
+      const ctxLucro = document.getElementById('lucroChart').getContext('2d');
+      lucroChart = new Chart(ctxLucro, {
+        type: 'bar',
+        data: {
+          labels: barracas,
+          datasets: [{
+            label: 'Lucro (R$)',
+            data: lucros,
+            backgroundColor: cores.slice(0, barracas.length),
+            borderRadius: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              ticks: {
+                callback: (value) => `R$ ${value.toFixed(2)}`
+              }
+            }
+          }
+        }
+      });
+
+      if (impostosChart) impostosChart.destroy();
+      const ctxImpostos = document.getElementById('impostosChart').getContext('2d');
+      impostosChart = new Chart(ctxImpostos, {
+        type: 'doughnut',
+        data: {
+          labels: barracas,
+          datasets: [{
+            data: impostos,
+            backgroundColor: cores.slice(0, barracas.length),
+            borderColor: 'rgba(255,255,255,0.1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 20 } }
+          }
+        }
+      });
+
+      if (evolucaoChart) evolucaoChart.destroy();
+      const ctxEvolucao = document.getElementById('evolucaoChart').getContext('2d');
+      const horas = gerarUltimasHoras(6);
+      const datasets = barracas.map((barraca, i) => ({
+        label: barraca,
+        data: gerarDadosAleatorios(lucros[i], 6),
+        borderColor: cores[i % cores.length],
+        backgroundColor: cores[i % cores.length] + '20',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true
+      }));
+
+      evolucaoChart = new Chart(ctxEvolucao, {
+        type: 'line',
+        data: { labels: horas, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'bottom', labels: { padding: 20 } } },
+          scales: {
+            y: {
+              ticks: {
+                callback: (value) => `R$ ${value.toFixed(2)}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function atualizarRanking() {
+      const data = window.dashboardData;
+      const barracas = Object.entries(data.barracas)
+        .sort((a, b) => b[1].lucro - a[1].lucro)
+        .slice(0, 10);
+
+      const rankingList = document.getElementById('rankingList');
+      rankingList.innerHTML = barracas.map((item, index) => {
+        const [nome, dados] = item;
+        let classe = '';
+        if (index === 0) classe = 'gold';
+        else if (index === 1) classe = 'silver';
+        else if (index === 2) classe = 'bronze';
+
+        return `
+          <div class="ranking-item ${classe}">
+            <div class="ranking-info">
+              <div class="ranking-badge">${index + 1}º</div>
+              <div class="ranking-details">
+                <h3>${nome}</h3>
+                <p>${Math.round(dados.pedidos)} pedido(s)</p>
+              </div>
+            </div>
+            <div class="ranking-value">
+              <div class="amount">R$ ${dados.lucro.toFixed(2).replace('.', ',')}</div>
+              <div class="tax">Impostos: R$ ${dados.impostos.toFixed(2).replace('.', ',')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function gerarUltimasHoras(quantidade) {
+      const horas = [];
+      for (let i = quantidade - 1; i >= 0; i--) {
+        const hora = new Date();
+        hora.setHours(hora.getHours() - i);
+        horas.push(hora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+      }
+      return horas;
+    }
+
+    function gerarDadosAleatorios(base, quantidade) {
+      const dados = [];
+      for (let i = 0; i < quantidade; i++) {
+        const variacao = (Math.random() - 0.5) * (base * 0.3);
+        dados.push(Math.max(0, base + variacao));
+      }
+      return dados;
+    }
+
+    function toggleView(view) {
+      const chartsView = document.getElementById('chartsView');
+      const rankingView = document.getElementById('rankingView');
+      const buttons = document.querySelectorAll('.toggle-view button');
+      
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      if (view === 'charts') {
+        chartsView.style.display = 'grid';
+        rankingView.style.display = 'none';
+        buttons[0].classList.add('active');
+      } else {
+        chartsView.style.display = 'none';
+        rankingView.style.display = 'grid';
+        buttons[1].classList.add('active');
+      }
+    }
+
+    window.addEventListener('load', inicializarDashboard);
+    window.addEventListener('beforeunload', () => {
+      if (atualizacaoInterval) clearInterval(atualizacaoInterval);
+    });
+  </script>
+
+</body>
+
+</html>
