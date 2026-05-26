@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>👨‍⚖️ Dashboard Prefeito - Festas Juninas</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    header h1 {
+      font-size: 3.5rem;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      margin-bottom: 15px;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 25px;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .stat-card h3 {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-card .value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #ffd93d;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .delta {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .delta.up {
+      color: #22c55e;
+    }
+
+    .delta.down {
+      color: #ff3131;
+    }
+
+    .charts-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .chart-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 25px;
+      min-height: 400px;
+    }
+
+    .chart-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ffd93d;
+    }
+
+    #barracasChart {
+      max-height: 300px;
+    }
+
+    #lucroChart {
+      max-height: 300px;
+    }
+
+    .ranking-table {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 25px;
+      overflow: auto;
+    }
+
+    .ranking-table h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ffd93d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    th {
+      text-align: left;
+      padding: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .rank-badge {
+      background: linear-gradient(45deg, #ec4899, #ff8c00);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .rank-1 {
+      background: linear-gradient(45deg, #ffd93d, #ffed4e);
+      color: #333;
+    }
+
+    .rank-2 {
+      background: linear-gradient(45deg, #c0c0c0, #e8e8e8);
+      color: #333;
+    }
+
+    .rank-3 {
+      background: linear-gradient(45deg, #cd7f32, #daa520);
+      color: white;
+    }
+
+    .barraca-name {
+      font-weight: 600;
+      color: #ffd93d;
+    }
+
+    .valor {
+      font-weight: 700;
+      color: #22c55e;
+      font-size: 1.1rem;
+    }
+
+    .imposto {
+      color: #ff8c00;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-ativo {
+      background: #22c55e;
+      color: white;
+    }
+
+    .status-inativo {
+      background: #ff3131;
+      color: white;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+      border-color: #ffd93d;
+    }
+
+    .btn.active {
+      background: #ffd93d;
+      color: #333;
+      border-color: #ffd93d;
+    }
+
+    .refresh-indicator {
+      text-align: center;
+      margin-top: 20px;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.7;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 2.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👨‍⚖️ Dashboard do Prefeito</h1>
+      <p>📊 Arrecadação em Tempo Real - Festa Junina</p>
+      <div class="refresh-indicator">
+        <span class="live-dot"></span>
+        <span id="status-text">Atualizando dados...</span>
+      </div>
+    </header>
+
+    <div class="controls">
+      <button class="btn active" onclick="filtrarPeriodo('hoje')">Hoje</button>
+      <button class="btn" onclick="filtrarPeriodo('semana')">Esta Semana</button>
+      <button class="btn" onclick="filtrarPeriodo('mes')">Este Mês</button>
+      <button class="btn" onclick="atualizarDados()">🔄 Atualizar Agora</button>
+    </div>
+
+    <!-- Estatísticas Principais -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <h3>💰 Faturamento Total</h3>
+        <div class="value" id="total-vendas">R$ 0,00</div>
+        <div class="delta up" id="delta-vendas">↑ 0% vs ontem</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>🏛️ Impostos Arrecadados</h3>
+        <div class="value" id="total-impostos">R$ 0,00</div>
+        <div class="delta up" id="delta-impostos">↑ 0% vs ontem</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>🎪 Barracas Ativas</h3>
+        <div class="value" id="barracas-ativas">0</div>
+        <div class="delta" id="delta-barracas">— Operando normalmente</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>📈 Barracas em Destaque</h3>
+        <div class="value" id="top-barraca">—</div>
+        <div class="delta" id="delta-top">Maior arrecadação</div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-section">
+      <div class="chart-card">
+        <h2>📊 Vendas por Barraca</h2>
+        <canvas id="barracasChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>💵 Evolução de Impostos</h2>
+        <canvas id="lucroChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Ranking de Barracas -->
+    <div class="ranking-table">
+      <h2>🏆 Ranking de Barracas (Por Impostos)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Posição</th>
+            <th>Barraca</th>
+            <th>Faturamento</th>
+            <th>Impostos (15%)</th>
+            <th>Status</th>
+            <th>Lucro Líquido</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-tbody">
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px;">
+              ⏳ Carregando dados...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="refresh-indicator" style="margin-top: 40px;">
+      <span class="live-dot"></span>
+      <span id="ultima-atualizacao">Carregando...</span>
+    </div>
+  </div>
+
+  <script>
+    let chartBarracas = null
+    let chartLucro = null
+    let periodoSelecionado = 'hoje'
+
+    // Dados de exemplo iniciais
+    const BARRACAS_EXEMPLO = [
+      { id: 1, nome: '💋 Barraca do Beijo', faturamento: 2500, ativo: true },
+      { id: 2, nome: '🌽 Pamonha Tradicional', faturamento: 1800, ativo: true },
+      { id: 3, nome: '🍚 Canjica Gourmet', faturamento: 1500, ativo: true },
+      { id: 4, nome: '🌭 Hot Dogs Premium', faturamento: 2200, ativo: true },
+      { id: 5, nome: '🍿 Pipoca Master', faturamento: 900, ativo: true },
+      { id: 6, nome: '🎯 Jogos da Festa', faturamento: 3500, ativo: true },
+      { id: 7, nome: '🎨 Pesca de Peixinhos', faturamento: 1200, ativo: true },
+      { id: 8, nome: '🎪 Balão Surpresa', faturamento: 800, ativo: false }
+    ]
+
+    const ALIQUOTA_IMPOSTO = 0.15 // 15% de imposto
+
+    async function atualizarDados() {
+      try {
+        const response = await fetch('http://localhost:3000/barracas')
+        let barracas = BARRACAS_EXEMPLO
+
+        try {
+          if (response.ok) {
+            const dados = await response.json()
+            if (dados && dados.length > 0) {
+              barracas = dados
+            }
+          }
+        } catch (e) {
+          console.log('Usando dados de exemplo')
+        }
+
+        renderizarDados(barracas)
+        atualizarGraficos(barracas)
+        atualizarRanking(barracas)
+
+        document.getElementById('status-text').textContent = 'Dados atualizados em tempo real ✨'
+        document.getElementById('ultima-atualizacao').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-BR')}`
+
+      } catch (erro) {
+        console.error('Erro ao carregar dados:', erro)
+        document.getElementById('status-text').textContent = 'Exibindo dados de exemplo'
+        // Usar dados de exemplo
+        renderizarDados(BARRACAS_EXEMPLO)
+        atualizarGraficos(BARRACAS_EXEMPLO)
+        atualizarRanking(BARRACAS_EXEMPLO)
+      }
+    }
+
+    function renderizarDados(barracas) {
+      const totalVendas = barracas.reduce((sum, b) => sum + b.faturamento, 0)
+      const totalImpostos = totalVendas * ALIQUOTA_IMPOSTO
+      const barracasAtivas = barracas.filter(b => b.ativo).length
+      const topBarraca = barracas.reduce((prev, current) => 
+        (prev.faturamento > current.faturamento) ? prev : current
+      )
+
+      document.getElementById('total-vendas').textContent = `R$ ${totalVendas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+      document.getElementById('total-impostos').textContent = `R$ ${totalImpostos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+      document.getElementById('barracas-ativas').textContent = barracasAtivas
+      document.getElementById('top-barraca').textContent = topBarraca.nome.substring(0, 15)
+      document.getElementById('delta-top').textContent = `R$ ${topBarraca.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    }
+
+    function atualizarGraficos(barracas) {
+      const nomes = barracas.map(b => b.nome)
+      const vendas = barracas.map(b => b.faturamento)
+      const impostos = barracas.map(b => b.faturamento * ALIQUOTA_IMPOSTO)
+
+      // Gráfico de Barracas
+      const ctxBarracas = document.getElementById('barracasChart').getContext('2d')
+      if (chartBarracas) chartBarracas.destroy()
+
+      chartBarracas = new Chart(ctxBarracas, {
+        type: 'bar',
+        data: {
+          labels: nomes,
+          datasets: [{
+            label: 'Faturamento (R$)',
+            data: vendas,
+            backgroundColor: [
+              '#ff3131', '#ff8c00', '#ffd93d', '#22c55e',
+              '#3b82f6', '#9333ea', '#ec4899', '#14b8a6'
+            ],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          indexAxis: 'x',
+          scales: {
+            y: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            x: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: 'rgba(255,255,255,0.7)' } }
+          }
+        }
+      })
+
+      // Gráfico de Lucro/Impostos
+      const ctxLucro = document.getElementById('lucroChart').getContext('2d')
+      if (chartLucro) chartLucro.destroy()
+
+      chartLucro = new Chart(ctxLucro, {
+        type: 'line',
+        data: {
+          labels: nomes,
+          datasets: [{
+            label: 'Impostos Arrecadados (R$)',
+            data: impostos,
+            borderColor: '#ffd93d',
+            backgroundColor: 'rgba(255, 217, 61, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#ffd93d'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            x: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: 'rgba(255,255,255,0.7)' } }
+          }
+        }
+      })
+    }
+
+    function atualizarRanking(barracas) {
+      const barracasOrdenadas = [...barracas].sort((a, b) => b.faturamento - a.faturamento)
+
+      const tbody = document.getElementById('ranking-tbody')
+      tbody.innerHTML = barracasOrdenadas.map((barraca, idx) => {
+        const imposto = barraca.faturamento * ALIQUOTA_IMPOSTO
+        const lucroLiquido = barraca.faturamento - imposto
+        const rankBadge = `rank-${Math.min(idx + 1, 3)}`
+
+        return `
+          <tr>
+            <td><span class="rank-badge ${rankBadge}">${idx + 1}º</span></td>
+            <td><span class="barraca-name">${barraca.nome}</span></td>
+            <td><span class="valor">R$ ${barraca.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
+            <td><span class="imposto">R$ ${imposto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
+            <td>
+              <span class="status-badge ${barraca.ativo ? 'status-ativo' : 'status-inativo'}">
+                ${barraca.ativo ? '✓ Ativa' : '✗ Inativa'}
+              </span>
+            </td>
+            <td><span class="valor">R$ ${lucroLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
+          </tr>
+        `
+      }).join('')
+    }
+
+    function filtrarPeriodo(periodo) {
+      periodoSelecionado = periodo
+
+      document.querySelectorAll('.controls .btn').forEach(btn => {
+        btn.classList.remove('active')
+      })
+      event.target.classList.add('active')
+
+      atualizarDados()
+    }
+
+    // Atualizar dados a cada 10 segundos
+    atualizarDados()
+    setInterval(atualizarDados, 10000)
+  </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💋 Admin - Barraca do Beijo</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 25px;
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: #ffd93d;
+    }
+
+    .stat {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin: 10px 0;
+      color: #ec4899;
+    }
+
+    .horarios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .horario-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .horario-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+      border-color: #ffd93d;
+    }
+
+    .horario-btn.active {
+      background: #ec4899;
+      border-color: #ec4899;
+    }
+
+    .fila-container {
+      grid-column: 1 / -1;
+    }
+
+    .fila-list {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+    }
+
+    .fila-list h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ffd93d;
+    }
+
+    .fila-item {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid #ec4899;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .cliente-info {
+      flex: 1;
+    }
+
+    .cliente-info h3 {
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+
+    .cliente-info p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin: 2px 0;
+    }
+
+    .senha-badge {
+      background: #ffd93d;
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      margin: 0 15px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-atender {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-atender:hover {
+      background: #16a34a;
+      transform: scale(1.05);
+    }
+
+    .btn-remover {
+      background: #ff3131;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-remover:hover {
+      background: #cc0000;
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.7;
+      font-size: 1.2rem;
+    }
+
+    .refresh-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ec4899;
+      color: white;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      transition: 0.3s;
+    }
+
+    .refresh-btn:hover {
+      transform: rotate(180deg) scale(1.1);
+    }
+
+    .logo-senha {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .fila-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .senha-badge {
+        margin: 10px 0 0 0;
+      }
+
+      .btn-group {
+        margin-top: 10px;
+        width: 100%;
+      }
+
+      .btn-atender, .btn-remover {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💋 Barraca do Beijo - Admin</h1>
+      <p>Gerenciar Fila Virtual de Agendamentos</p>
+    </header>
+
+    <div class="dashboard">
+      <!-- Cards de Status -->
+      <div class="card">
+        <h2>📊 Estatísticas</h2>
+        <p>Total de Agendamentos</p>
+        <div class="stat" id="total-agendamentos">0</div>
+        <p style="margin-top: 15px; opacity: 0.8;">Atualizando em tempo real...</p>
+      </div>
+
+      <div class="card">
+        <h2>⏰ Horários Disponíveis</h2>
+        <div class="horarios-grid" id="horarios-grid">
+          <button class="horario-btn" onclick="filtrarPorHorario('14:00')">14:00</button>
+          <button class="horario-btn" onclick="filtrarPorHorario('15:00')">15:00</button>
+          <button class="horario-btn" onclick="filtrarPorHorario('16:00')">16:00</button>
+          <button class="horario-btn" onclick="filtrarPorHorario('17:00')">17:00</button>
+          <button class="horario-btn" onclick="filtrarPorHorario('18:00')">18:00</button>
+          <button class="horario-btn active" onclick="filtrarPorHorario(null)">Todos</button>
+        </div>
+      </div>
+
+      <!-- Lista de Fila -->
+      <div class="card fila-container">
+        <div class="fila-list">
+          <h2>📋 Fila de Agendamentos</h2>
+          <div id="fila-list-container">
+            <div class="empty-state">⏳ Carregando agendamentos...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="refresh-btn" onclick="atualizarFila()" title="Atualizar">🔄</button>
+
+  <script>
+    let agendamentos = []
+    let horarioFiltrado = null
+
+    async function atualizarFila() {
+      try {
+        const response = await fetch('http://localhost:3000/agendamentos')
+        agendamentos = await response.json()
+        
+        renderizarFila()
+        atualizarEstatisticas()
+      } catch (erro) {
+        console.error('Erro ao carregar agendamentos:', erro)
+        document.getElementById('fila-list-container').innerHTML = '❌ Erro ao carregar. Verifique se o servidor está rodando.'
+      }
+    }
+
+    function atualizarEstatisticas() {
+      document.getElementById('total-agendamentos').textContent = agendamentos.length
+    }
+
+    function renderizarFila() {
+      const container = document.getElementById('fila-list-container')
+      
+      let filaFiltrada = agendamentos
+      if (horarioFiltrado) {
+        filaFiltrada = agendamentos.filter(a => a.horario === horarioFiltrado)
+      }
+
+      if (filaFiltrada.length === 0) {
+        container.innerHTML = '<div class="empty-state">✨ Nenhum agendamento neste horário</div>'
+        return
+      }
+
+      container.innerHTML = filaFiltrada.map((agend, idx) => `
+        <div class="fila-item">
+          <div class="cliente-info">
+            <h3>${idx + 1}. ${agend.nome}</h3>
+            <p>📱 ${agend.telefone}</p>
+            <p>📧 ${agend.email}</p>
+            <p>📅 ${agend.data} • ⏰ ${agend.horario}</p>
+          </div>
+          <div class="logo-senha">
+            <div class="senha-badge">#${agend.senha}</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn-atender" onclick="atenderCliente(${agend.senha})">✅ Atender</button>
+            <button class="btn-remover" onclick="removerAgendamento(${agend.senha})">🗑️</button>
+          </div>
+        </div>
+      `).join('')
+    }
+
+    function filtrarPorHorario(horario) {
+      horarioFiltrado = horario
+      
+      // Atualizar botões
+      document.querySelectorAll('.horario-btn').forEach(btn => {
+        btn.classList.remove('active')
+      })
+      event.target.classList.add('active')
+      
+      renderizarFila()
+    }
+
+    async function atenderCliente(senha) {
+      if (confirm(`Atender cliente com senha #${senha}?`)) {
+        try {
+          const response = await fetch(`http://localhost:3000/agendamento/${senha}`, {
+            method: 'DELETE'
+          })
+          
+          if (response.ok) {
+            alert('✅ Cliente atendido com sucesso!')
+            atualizarFila()
+          }
+        } catch (erro) {
+          console.error('Erro:', erro)
+        }
+      }
+    }
+
+    async function removerAgendamento(senha) {
+      if (confirm(`Remover agendamento com senha #${senha}?`)) {
+        try {
+          const response = await fetch(`http://localhost:3000/agendamento/${senha}`, {
+            method: 'DELETE'
+          })
+          
+          if (response.ok) {
+            alert('✅ Agendamento removido!')
+            atualizarFila()
+          }
+        } catch (erro) {
+          console.error('Erro:', erro)
+        }
+      }
+    }
+
+    // Atualizar a cada 5 segundos
+    atualizarFila()
+    setInterval(atualizarFila, 5000)
+  </script>
+</body>
+</html>
